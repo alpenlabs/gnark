@@ -41,6 +41,7 @@ import (
 	bn254r1cs "github.com/consensys/gnark/constraint/bn254"
 	bw6633r1cs "github.com/consensys/gnark/constraint/bw6-633"
 	bw6761r1cs "github.com/consensys/gnark/constraint/bw6-761"
+	sectr1cs "github.com/consensys/gnark/constraint/sect"
 	"github.com/consensys/gnark/constraint/solver"
 	tinyfieldr1cs "github.com/consensys/gnark/constraint/tinyfield"
 )
@@ -108,6 +109,10 @@ func newBuilder(field *big.Int, config frontend.CompileConfig) *builder {
 	case ecc.BLS24_317:
 		b.cs = bls24317r1cs.NewSparseR1CS(config.Capacity)
 	default:
+		if field.Cmp(sectr1cs.Modulus()) == 0 {
+			b.cs = sectr1cs.NewR1CS(config.Capacity)
+			break
+		}
 		if field.Cmp(tinyfield.Modulus()) == 0 {
 			b.cs = tinyfieldr1cs.NewSparseR1CS(config.Capacity)
 			break
