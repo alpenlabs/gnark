@@ -9,6 +9,7 @@ import (
 	"github.com/blang/semver/v4"
 	"github.com/consensys/gnark"
 	"github.com/consensys/gnark-crypto/ecc"
+	fr_sect "github.com/consensys/gnark-crypto/ecc/sect/fr"
 	"github.com/consensys/gnark/constraint/solver"
 	"github.com/consensys/gnark/debug"
 	"github.com/consensys/gnark/internal/tinyfield"
@@ -202,7 +203,7 @@ func (system *System) CheckSerializationHeader() error {
 		return fmt.Errorf("when parsing serialized modulus: %s", system.ScalarField)
 	}
 	curveID := utils.FieldToCurve(scalarField)
-	if curveID == ecc.UNKNOWN && scalarField.Cmp(tinyfield.Modulus()) != 0 {
+	if curveID == ecc.UNKNOWN && (scalarField.Cmp(tinyfield.Modulus()) != 0 || scalarField.Cmp(fr_sect.Modulus()) != 0) {
 		return fmt.Errorf("unsupported scalar field %s", scalarField.Text(16))
 	}
 	system.q = new(big.Int).Set(scalarField)

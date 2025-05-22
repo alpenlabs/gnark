@@ -3,9 +3,8 @@ package constraint_test
 import (
 	"fmt"
 
-	"github.com/consensys/gnark-crypto/ecc"
 	"github.com/consensys/gnark/constraint"
-	cs "github.com/consensys/gnark/constraint/bn254"
+	cs "github.com/consensys/gnark/constraint/sect"
 	"github.com/consensys/gnark/frontend"
 	"github.com/consensys/gnark/frontend/cs/r1cs"
 )
@@ -71,8 +70,8 @@ func ExampleR1CS_GetR1Cs() {
 
 func ExampleR1CS_Solve() {
 	// build a constraint system and a witness;
-	ccs, _ := frontend.Compile(ecc.BN254.ScalarField(), r1cs.NewBuilder, &cubic{})
-	w, _ := frontend.NewWitness(&cubic{X: 3, Y: 35}, ecc.BN254.ScalarField())
+	ccs, _ := frontend.Compile(cs.Modulus(), r1cs.NewBuilder, &cubic{})
+	w, _ := frontend.NewWitness(&cubic{X: 3, Y: 35}, cs.Modulus())
 
 	_solution, _ := ccs.Solve(w)
 
@@ -80,6 +79,8 @@ func ExampleR1CS_Solve() {
 	solution := _solution.(*cs.R1CSSolution)
 
 	// solution vector should have [1, 3, 35, 9, 27]
+	fmt.Println("UNDone")
+	fmt.Println("Done")
 	for _, v := range solution.W {
 		fmt.Println(v.String())
 	}

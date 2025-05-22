@@ -13,6 +13,7 @@ import (
 	fr_bn254 "github.com/consensys/gnark-crypto/ecc/bn254/fr"
 	fr_bw6633 "github.com/consensys/gnark-crypto/ecc/bw6-633/fr"
 	fr_bw6761 "github.com/consensys/gnark-crypto/ecc/bw6-761/fr"
+	fr_sect "github.com/consensys/gnark-crypto/ecc/sect/fr"
 	"github.com/consensys/gnark/internal/tinyfield"
 	"github.com/consensys/gnark/internal/utils"
 )
@@ -35,7 +36,9 @@ func newVector(field *big.Int, size int) (any, error) {
 	case ecc.BW6_633:
 		return make(fr_bw6633.Vector, size), nil
 	default:
-		if field.Cmp(tinyfield.Modulus()) == 0 {
+		if field.Cmp(fr_sect.Modulus()) == 0 {
+			return make(fr_sect.Vector, size), nil
+		} else if field.Cmp(tinyfield.Modulus()) == 0 {
 			return make(tinyfield.Vector, size), nil
 		} else {
 			return nil, errors.New("unsupported modulus")
@@ -155,6 +158,12 @@ func set(v any, index int, value any) error {
 		}
 		_, err := pv[index].SetInterface(value)
 		return err
+	case fr_sect.Vector:
+		if index >= len(pv) {
+			return errors.New("out of bounds")
+		}
+		_, err := pv[index].SetInterface(value)
+		return err
 	default:
 		panic("invalid input")
 	}
@@ -243,6 +252,8 @@ func resize(v any, n int) any {
 		return make(fr_bw6633.Vector, n)
 	case tinyfield.Vector:
 		return make(tinyfield.Vector, n)
+	case fr_sect.Vector:
+		return make(fr_sect.Vector, n)
 	default:
 		panic("invalid input")
 	}
