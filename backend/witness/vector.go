@@ -80,6 +80,10 @@ func newFrom(from any, n int) (any, error) {
 		a := make(tinyfield.Vector, n)
 		copy(a, wt)
 		return a, nil
+	case fr_sect.Vector:
+		a := make(fr_sect.Vector, n)
+		copy(a, wt)
+		return a, nil
 	default:
 		return nil, errors.New("unsupported modulus")
 	}
@@ -103,6 +107,8 @@ func leafType(v any) reflect.Type {
 		return reflect.TypeOf(fr_bw6633.Element{})
 	case tinyfield.Vector:
 		return reflect.TypeOf(tinyfield.Element{})
+	case fr_sect.Vector:
+		return reflect.TypeOf(fr_sect.Element{})
 	default:
 		panic("invalid input")
 	}
@@ -222,6 +228,13 @@ func iterate(v any) chan any {
 			close(chValues)
 		}()
 	case tinyfield.Vector:
+		go func() {
+			for i := 0; i < len(pv); i++ {
+				chValues <- &(pv)[i]
+			}
+			close(chValues)
+		}()
+	case fr_sect.Vector:
 		go func() {
 			for i := 0; i < len(pv); i++ {
 				chValues <- &(pv)[i]
