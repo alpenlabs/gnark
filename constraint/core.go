@@ -203,7 +203,7 @@ func (system *System) CheckSerializationHeader() error {
 		return fmt.Errorf("when parsing serialized modulus: %s", system.ScalarField)
 	}
 	curveID := utils.FieldToCurve(scalarField)
-	if curveID == ecc.UNKNOWN && (scalarField.Cmp(tinyfield.Modulus()) != 0 || scalarField.Cmp(fr_sect.Modulus()) != 0) {
+	if curveID == ecc.UNKNOWN && (scalarField.Cmp(tinyfield.Modulus()) != 0 && scalarField.Cmp(fr_sect.Modulus()) != 0) {
 		return fmt.Errorf("CheckSerializationHeader unsupported scalar field %s", scalarField.Text(16))
 	}
 	system.q = new(big.Int).Set(scalarField)
