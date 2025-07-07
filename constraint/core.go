@@ -204,7 +204,7 @@ func (system *System) CheckSerializationHeader() error {
 	}
 	curveID := utils.FieldToCurve(scalarField)
 	if curveID == ecc.UNKNOWN && (scalarField.Cmp(tinyfield.Modulus()) != 0 || scalarField.Cmp(fr_sect.Modulus()) != 0) {
-		return fmt.Errorf("unsupported scalar field %s", scalarField.Text(16))
+		return fmt.Errorf("CheckSerializationHeader unsupported scalar field %s", scalarField.Text(16))
 	}
 	system.q = new(big.Int).Set(scalarField)
 	system.bitLen = system.q.BitLen()
